@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+</head>
+<body>
+    <button onclick="displaySocket.nextVideoSource();">Next camera</button>
+    <input id="file-input" type="file">
+    <script src="../dist/displaysocket.js"></script>
+    <video id="video" style='height:50px;width:50px'></video>
+    <div style='margin:15px;height:400px; width:400px;' id="writer-output"></div>
+    <script>
+        var outputElement = document.getElementById('writer-output');
+        var videoElement = document.getElementById('video');
+        var fileInput = document.getElementById('file-input');
+
+        var displaySocket = new DisplaySocket({
+            video: videoElement,
+            output: outputElement
+        });
+
+        fileInput.addEventListener('change', function(e) {
+            // TODO make this work in FireFox
+            var file = e.path[0].files[0]
+            var reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function(e) {
+                displaySocket.send(reader.result);
+            }
+        });
+    </script>
+</body>
+</html>

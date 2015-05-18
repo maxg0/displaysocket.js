@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+</head>
+<body>
+    <button onclick="displaySocket.nextVideoSource();">Next camera</button>
+    <a href="" id="ready-button" style='display:none;'>Ready</a>
+    <script src="../dist/displaysocket.js"></script>
+    <video id="video" style='height:50px;width:50px'></video>
+    <div id="progress" style='height: 25px; width:100%;'></div>
+    <script>
+
+        var videoElement = document.getElementById('video');
+        var readyButton = document.getElementById('ready-button');
+        var progressBar = document.getElementById('progress');
+
+        var displaySocket = new DisplaySocket({
+            video: videoElement
+        });
+
+        var messageFunction = function(e) {
+            console.log('received', e);
+            var uriContent = e.data;
+            readyButton.style.display = 'block';
+            readyButton.href = uriContent;
+            readyButton.innerHTML = "Ready. Took " + e.time
+        };
+
+        var progressFunction = function(p) {
+            var progress = p.progress;
+            progressBar.innerHTML = '';
+
+            // the graphical method will lag a lot if there are many parts
+            // so instead just show some numbers if there are over 100 parts
+            // TODO make better progress bar for simplex receive demo
+            // maybe something based on a canvas
+            if( progress.length > 100 ) {
+                progressBar.innerHTML = ' found: '   + p.found
+                    + ' current: ' + p.current
+                    + ' total: ' + p.total
+                    + ' ' + p.percent + '%';
+                return;
+            }
+
+            var pieceWidth = parseInt(progressBar.offsetWidth / p.progress.length);
+            for(var i = 0; i < progress.length; i++) {
+                if( i === p.current ) {
+                    progressBar.innerHTML += '<div style="background:green; height:10px; width:'+pieceWidth+'px; float:left;"></div>';
+                    continue;
+                }
+                if(progress[i]){
+                    progressBar.innerHTML += '<div style="background:black; height:10px; width:'+pieceWidth+'px; float:left;"></div>';
+                } else {
+                    progressBar.innerHTML += '<div style="background:grey; height:10px; width:'+pieceWidth+'px; float:left;"></div>';
+
+                }
+            }
+        };
+
+        displaySocket.addEventListener('progress', progressFunction);
+        //displaySocket.onprogress = progressFunction;
+
+        displaySocket.addEventListener('message', messageFunction);
+        //displaySocket.onmessage = messageFunction;
+
+        // you can also displaySocket.removeEventListener('progress', progressFunction);
+    </script>
+</body>
+</html>

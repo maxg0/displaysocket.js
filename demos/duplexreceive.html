@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+</head>
+<body>
+    <button onclick="displaySocket.nextVideoSource();">Next camera</button>
+    <a href="" id="ready-button" style='display:none;'>Ready</a>
+    <script src="../dist/displaysocket.js"></script>
+    <video id="video" style='height:50px;width:50px'></video>
+    <div id="progress" style='color:white;height: 25px; width:100%;background:black;'></div>
+    <div style='margin:15px;height:256px; width:256px;' id="writer-output"></div>
+
+    <script>
+        var outputElement = document.getElementById('writer-output');
+        var videoElement = document.getElementById('video');
+        var readyButton = document.getElementById('ready-button');
+        var progressBar = document.getElementById('progress');
+
+        var messageFunction = function(e) {
+            console.log('received', e.data);
+            var uriContent = e.data;
+            readyButton.style.display = 'block';
+            readyButton.href = uriContent;
+            readyButton.innerHTML = "Ready. Took " + e.time
+        };
+
+        var progressFunction = function(p) {
+            console.log(p);
+            progressBar.style.width = 100 * p.percent + '%';
+            progressBar.text = p.percent;
+        };
+
+        var displaySocket = new DisplaySocket({
+            video: videoElement,
+            output: outputElement
+        });
+
+        displaySocket.onmessage = messageFunction;
+        displaySocket.onprogress = progressFunction;
+
+    </script>
+</body>
+</html>

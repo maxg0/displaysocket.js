@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+</head>
+<body>
+    <button onclick="displaySocket.nextVideoSource();">Next camera</button>
+    <input id="file-input" type="file">
+    <script src="../dist/displaysocket.js"></script>
+    <div style='margin:15px;background:black;' id="writer-output"></div>
+    <script>
+        /*
+        // shake the output to prevent getting stuck when camera not moving
+        var outputElement = document.getElementById('writer-output');
+        setInterval(function() {
+            var a = 20;
+            outputElement.style.marginLeft = 5 + (Math.random() + a) + 'px';
+            outputElement.style.marginTop  = 5 + (Math.random() + a) + 'px';
+        }, 100);
+        */
+    </script>
+    <script>
+        var outputElement = document.getElementById('writer-output');
+        var size = Math.min(window.innerHeight, window.innerWidth);
+        console.log('sizes',window.innerHeight, window.innerWidth);
+        size -= parseInt(outputElement.style.margin) * 4;
+        console.log('size:', size);
+        outputElement.style.width = size + 'px';
+        outputElement.style.height = size + 'px';
+        var fileInput = document.getElementById('file-input');
+        var displaySocket = new DisplaySocket({
+            output: outputElement,
+        });
+
+        /*
+        // handy if you don't want to select a file every time
+        var sendData = '';
+        for(var i = 0; i < 100; i++) {
+            sendData += i + ' ';
+        }
+        displaySocket.send(sendData);
+        /**/
+
+        fileInput.addEventListener('change', function(e) {
+            // TODO make this work in FireFox
+            var file = e.path[0].files[0]
+            var reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function(e) {
+                displaySocket.send(reader.result);
+            }
+        });
+    </script>
+</body>
+</html>

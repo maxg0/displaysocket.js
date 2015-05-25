@@ -20,8 +20,7 @@
         });
 
         fileInput.addEventListener('change', function(e) {
-            // TODO make this work in FireFox
-            var file = e.path[0].files[0]
+            var file = e.target.files[0];
             var reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onload = function(e) {

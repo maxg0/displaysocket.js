@@ -118,5 +118,5 @@ The core functionality of this library relies on other people's work, namely jsq
 
 The file qrcode.js from jsqrcode has been modified to avoid console.log() clutter.
 
-This is part of my bachelor's thesis (link coming later).
+This is part of my [bachelor's thesis](http://urn.fi/URN:NBN:fi:amk-2015060412394).
 

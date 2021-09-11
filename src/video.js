@@ -85,10 +85,15 @@ function Video(videoElement, canvas) { // jshint ignore:line
 
         } else {
             //console.log('not mozilla');
-            videoElement.src = (
-                        window.URL &&
-                        window.URL.createObjectURL(videoStream)
-                    ) || videoStream;
+            if ('srcObject' in videoElement) {
+				videoElement.srcObject = videoStream;
+			  } else {
+				// Avoid using this in new browsers, as it is going away.
+				videoElement.src = (
+							window.URL &&
+							window.URL.createObjectURL(videoStream)
+						) || videoStream;
+			  }
         }
         //console.log('video success');
         videoElement.play();
